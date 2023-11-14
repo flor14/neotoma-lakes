@@ -21,6 +21,9 @@ jobs:
           r-version: 4.2.1
           use-public-rspm: true
 
+      - name: Install terra
+        run: Rscript -e 'install.packages("terra", version = "1.3-13")'
+
       - uses: r-lib/actions/setup-renv@v2
 
       - name: Install rsconnect
