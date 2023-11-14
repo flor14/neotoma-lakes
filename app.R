@@ -83,7 +83,7 @@ ui <-  bslib::page_navbar(
   title = "NeotomaDB",
   theme = bslib::bs_theme(bootswatch = "minty",
                    base_font = font_google("Inter")),
-  bslib::nav_panel(title = "correct",
+  bslib::nav_panel(title = "Lakes",
             bslib::layout_columns(
     col_widths = c(8, 4, 8, 4),
     row_heights = c(7, 4),
@@ -104,22 +104,26 @@ tags$h6('NeotomaDB data'),
  ),
 
  shinycssloaders::withSpinner(
- leaflet::leafletOutput('map', height = 645),
+ leaflet::leafletOutput('map', height = 600),
  type = 4,
  color = 'darkgreen',
  color.background = 'white')),
     card(
       card_header("HydroLAKES"),
+      bslib::layout_columns(
+        col_widths = c(6, 6),
       plotOutput('hydrolake'),
-      textOutput('lakeinfo')
+      textOutput('lakeinfo'))
     ),
     card(
 
     ),
     card(
       card_header("Country"),
+      bslib::layout_columns(
+        col_widths = c(6, 6),
       plotOutput('country'),
-      textOutput('countryinfo')
+      textOutput('countryinfo'))
     ))
   ),
 nav_spacer(),

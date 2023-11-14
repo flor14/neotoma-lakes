@@ -1,0 +1,12 @@
+name: neotoma-lakes
+title: neotoma-lakes
+username: flor
+account: flor
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 10513624
+bundleId: 7923394
+url: https://flor.shinyapps.io/neotoma-lakes/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
