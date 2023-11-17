@@ -5,9 +5,12 @@ library(sf)
 library(stringr)
 library(dplyr)
 library(shinycssloaders)
+library(DT)
 library(leafem)
 library(tidyr)
 library(ggplot2)
+library(shinyWidgets)
+library(leaflet.extras)
 
 # https://github.com/r-spatial/sf/issues/1762
 sf_use_s2(FALSE)
@@ -16,8 +19,8 @@ sf_use_s2(FALSE)
 #
 # lakes <- st_read('../Dropbox/neotoma_project/HydroLAKES_polys_v10_shp/HydroLAKES_polys_v10_shp') |>
 #   select(Hylak_id, Lake_name, Country, Vol_total, Shore_len, Depth_avg, Elevation, geometry)
-#
-#
+
+
 # # I select some countries to try the app. Later I will use all.
 #
 #
@@ -37,17 +40,17 @@ sf_use_s2(FALSE)
 countries_sf <- st_read('data/countries.gpkg') |> st_transform(3857) |>  st_simplify(preserveTopology = TRUE, dTolerance=100)
 
 # st_geometry(countries) <- NULL
-#
+
 # #Some sites are points and other ones are polygons
 # pointsites <- sites[stringr::str_detect(sites$geog, pattern = "POINT"), ] |>
 #   sf::st_as_sf(wkt = 'geog') |>
-#   select(siteid, sitename, geog) |>
+#   select(siteid, sitename, sitedescription, notes, geog) |>
 #   mutate(lonc = sf::st_coordinates(geog)[,1], # need this to setView in leaflet
 #          latc = sf::st_coordinates(geog)[,2])
 #
 # polysites <- sites[stringr::str_detect(sites$geog, pattern = "POLYGON"), ] |>
 #   sf::st_as_sf(wkt = 'geog') |>
-#   select(siteid, sitename, geog) |>
+#   select(siteid, sitename, sitedescription, notes, geog) |>
 #   st_simplify(preserveTopology = TRUE,
 #               dTolerance = 100) |>
 #   mutate(centroid = st_point_on_surface(geog),  # need this to setView in leaflet
@@ -67,7 +70,7 @@ countries_sf <- st_read('data/countries.gpkg') |> st_transform(3857) |>  st_simp
 #               dTolerance = 100) |>
 #    st_transform(4326)
 # write_sf(lakes_country, "data/lakes_country.gpkg")
- lakes_country <- st_read("data/lakes_country.gpkg") |> st_transform(3857)
+lakes_country <- st_read("data/lakes_country.gpkg") |> st_transform(3857)
 #
 #  sites_country <- datasf |> st_join(countries_sf, left = TRUE) |> tidyr::drop_na(COUNTRY)
 # write_sf(datasf_country, "data/sites_country.gpkg")
@@ -81,51 +84,84 @@ link_slack <- tags$a(shiny::icon("slack"), "Slack", href = "https://neotomadb.sl
 
 ui <-  bslib::page_navbar(
   title = "NeotomaDB",
-  theme = bslib::bs_theme(bootswatch = "minty",
-                   base_font = font_google("Inter")),
+  theme = bslib::bs_theme(version = 5,
+                          bootswatch = "minty",
+                   base_font = font_google("Raleway", wght = "400"),
+                   heading_font = font_google("Raleway", wght = "200")),
+                 #  primary = 'orange'),
   bslib::nav_panel(title = "Lakes",
             bslib::layout_columns(
-    col_widths = c(8, 4, 8, 4),
-    row_heights = c(7, 4),
+    col_widths = c(9, 3),
+    row_heights = c(1,1),
+
+
         bslib::layout_sidebar(class = "p-0",
-                             sidebar = sidebar(width = 200,
-textInput('neositeid', 'SiteId', placeholder = "write here"),
-
- # selectizeInput(inputId = 'neositeid',
- #             label = 'SiteId',
- #             choices = NULL
- #             # choices = sort(unique(data$siteid)),
- #             # selected = data$siteid[3]
- #             ),
+                             sidebar = sidebar(width = 300,
+                                               bg = 'white',
+ textInput('neositeid',
+           'SiteId',
+           placeholder = "write here"),
+ tooltip(
  shiny::actionButton('search', 'Search!'),
- hr(),
-tags$h6('NeotomaDB data'),
- textOutput('sitename')
+ "Check sitesid in the webpage. For this demo you can use site 9606 as an example"),
+ accordion(
+   open = 'User options',
+   multiple = TRUE,
+   height="100%",
+   id = 'sidebar_accordion',
+   accordion_panel(
+     'Site metadata',
+     DT::DTOutput('metadata')),
+   accordion_panel(
+     'Map options',
+   shinyWidgets::materialSwitch(
+     inputId = "removelakes",
+     label = "remove HYDROlakes layer",
+     status = "primary"
+   )),
+ accordion_panel(
+   'User options',
+ prettyRadioButtons( # or prettyRadioButtons
+   inputId = "modify",
+   label = "Is this site the correct lake polygon in NeotomaDB?",
+   choices = c("Yes", "No"),
+   outline = TRUE,
+   plain = TRUE,
+   status = "primary",
+   icon = icon("check")
  ),
-
+ uiOutput('dynamicUI')
+ ))),
+accordion(id = 'map_accordion',
+  height="100%",
+  open = c("Map"),
+  accordion_panel(
+    "Map",
+    class = 'p-0',
  shinycssloaders::withSpinner(
  leaflet::leafletOutput('map', height = 600),
  type = 4,
  color = 'darkgreen',
  color.background = 'white')),
+ accordion_panel(
+   "Comments",
+textAreaInput('notes',
+              label = 'Comments:'),
+downloadButton('submit', 'Submit')))),
     card(
       card_header("HydroLAKES"),
-      bslib::layout_columns(
+       bslib::layout_columns(
         col_widths = c(6, 6),
       plotOutput('hydrolake'),
-      textOutput('lakeinfo'))
-    ),
-    card(
+      DT::DTOutput('lakeinfo')),
+      textOutput('lakename'),
+      textOutput('dist', inline = TRUE)
+     # plotOutput('country'),
+     # textOutput('countryinfo')
 
-    ),
-    card(
-      card_header("Country"),
-      bslib::layout_columns(
-        col_widths = c(6, 6),
-      plotOutput('country'),
-      textOutput('countryinfo'))
-    ))
-  ),
+    )
+
+  )),
 nav_spacer(),
 nav_menu(
   title = "Links",
@@ -153,7 +189,8 @@ server <- function(input, output, session) {
 
     sites_country |>
        dplyr::mutate(siteid = as.character(siteid)) |>
-      dplyr::filter(siteid %in% as.character(input$neositeid)) |> st_transform(3857)
+      dplyr::filter(siteid %in% as.character(input$neositeid)) |>
+      st_transform(3857)
 
   })
 
@@ -169,7 +206,10 @@ server <- function(input, output, session) {
 
   output$map <- leaflet::renderLeaflet({
 
-    print(lake_data())
+    validate(
+      need(!is.null(input$neositeid), "Please, provide a NeotomaDB siteId")
+    )
+
 
    lm =  leaflet::leaflet() |>
      leaflet::addTiles(group = "OpenStreetMap") |>
@@ -190,17 +230,20 @@ server <- function(input, output, session) {
 
    bbx = st_bbox(st_union(neosites_data, lake_data))
 
-  # bbx = bbx |> st_transform(4326)
 
 
+
+
+   # the plot will change if it is a point or a polygon
    if(sf::st_is(neosites_data(), "POINT")){
 
-    lm |>
+   lm =  lm |>
        leaflet::addPolygons(data = lake_data,
-                            layerId = ~lake_data$Hylak_id, # https://rstudio.github.io/leaflet/showhide.html
+                            group = 'lakes',
+                            layerId = ~Hylak_id, # https://rstudio.github.io/leaflet/showhide.html
                             weight = 5,
                             color = "blue",
-                            fillColor = "lightblue") |> # lakes
+                            fillColor = "lightblue") |>
        leaflet::addCircles(data = neosites_data,
                            weight = 5,
                            color = "darkorange",
@@ -213,12 +256,13 @@ server <- function(input, output, session) {
 
    }else{
 
-    lm |>
+   lm = lm |>
        leaflet::addPolygons(data = lake_data,
-                            layerId = ~lake_data$Hylak_id, # https://rstudio.github.io/leaflet/showhide.html
+                            group = 'lakes',
+                            layerId = ~Hylak_id, # https://rstudio.github.io/leaflet/showhide.html
                             weight = 5,
                             color = "blue",
-                            fillColor = "lightblue")  |> # lakes
+                            fillColor = "lightblue") |>
        leaflet::addPolygons(data = neosites_data,
                             weight = 5,
                             color = "darkorange",
@@ -232,14 +276,69 @@ server <- function(input, output, session) {
    }
 
 
+# Add toolbar to draw polygons if this is requested by the user
+   if(!is.null(input$nooptions) && input$nooptions == "Create lake polygon"){
+
+    lm |>
+      leaflet.extras::addDrawToolbar(markerOptions = FALSE)
+
+
+   }else{ lm }
+
+
+
   })
 
+# hide the lakes layer
+  observeEvent(input$removelakes, {
 
-  output$sitename <- renderText({
-  #  req(input$search)
-   paste("sitename:", as.character(neosites_data()$sitename))
-    })
+    proxy <- leafletProxy('map')
 
+   if(input$removelakes == TRUE){
+       proxy |>  hideGroup('lakes')
+   }else{
+       proxy |>  showGroup('lakes')}
+    }
+  )
+
+  observeEvent(input$map_draw_new_feature,{
+    feature <- input$map_draw_new_feature
+
+    print(feature$geometry$coordinates)
+
+  })
+
+observeEvent(input$neositeid,{
+  accordion_panel_open(id = 'sidebar_accordion',
+                       value = 'Site metadata')
+})
+
+
+observeEvent(input$modify,{
+  accordion_panel_open(id = 'map_accordion',
+                       value = 'Comments')
+})
+
+
+  output$metadata <- DT::renderDT({
+
+   name =  as.character(neosites_data()$sitename)
+   description = as.character(neosites_data()$sitedescription)
+   notes = as.character(neosites_data()$notes)
+
+   data <- data.frame(c(description,
+                        'notes', notes))
+
+   colnames(data) <- as.character(name)
+
+   DT::datatable(data,
+                 rownames= FALSE,
+                 options = list(dom = 't',
+                 ordering = FALSE))
+
+
+
+  })
 
   lk_hover <- reactive({
 
@@ -282,36 +381,77 @@ server <- function(input, output, session) {
 
 
 
-    }else{
-
-
-      ggplot()+
-        geom_sf(data = lake_data[1,], # only the closest lake
-                fill = 'transparent',
-                lwd = 0.5)+
-        theme_void()
-
-
     }
+
+  })
+
+  output$dist <- renderText({
+
+
+
+    validate(
+      need(!is.null(input$map_shape_click), "Please, click one of the HYDROlakes in the map")
+    )
+
 
 
   })
 
-  output$lakeinfo <- renderText({
+  output$dynamicUI <- renderUI({
+    if (input$modify == "No") {
+      prettyRadioButtons( # or prettyRadioButtons
+        inputId = "nooptions",
+        label = "How would you update NeotomaDB?",
+        choices = c("Replace it with a HYDROLakeDB (preferred)" ,
+                    "Create lake polygon"),
+        outline = TRUE,
+        plain = TRUE,
+        status = "primary",
+        icon = icon("check"))
+    } else {
+      # If the option is not "Option 1", render an empty div
+      div()
+    }
+  })
+
+  output$lakename <- renderText({
+
+    as.character(lk_hover()$Lake_name)
+
+  })
+
+  output$lakeinfo <- DT::renderDT({
 
 
-    lake_data = lake_data() |> st_transform(4326)
-
-    print(lake_data)
-
-    if(!is.null(input$map_shape_click$id)){
-
-      paste("Hylak ID:", as.character(lk_hover()$Hylak_id))
+print(input$map_shape_click)
 
 
-      }else{
 
-        paste("Hylak ID:",as.character(lake_data[1,]$Hylak_id))
+    if(!is.null(input$map_shape_click)){
+
+
+      datalk <- t(data.frame(c('Hylak_id',
+                           lk_hover()$Hylak_id),
+                           c('Elevation',
+                           lk_hover()$Elevation),
+                           c('Shore length',
+                           lk_hover()$Shore_len),
+                           c('Depth average',
+                           lk_hover()$Depth_avg),
+                           c('Volume total',
+                           lk_hover()$Vol_total)))
+
+      colnames(datalk) <- NULL
+
+
+
+      DT::datatable(datalk,
+                    rownames= FALSE,
+                    options = list(ordering = FALSE,
+                                   dom = 't'),
+                    colnames = rep("", ncol(datalk)))
+
+
     }
 
   })
@@ -375,6 +515,53 @@ print(lk_hover())
     }
 
   })
+
+
+  # Subset of data to send in relation with user input
+
+  data_submit <- reactive({
+
+
+    if(input$modify == 'Yes'){
+
+     data_submit <-  data.frame('siteId' = input$neositeid,
+                                 'comments' = input$notes)
+
+    }else if(input$modify == "No" & input$nooptions == "No"){
+
+      data_submit <-  data.frame('siteId' = input$neositeid,
+                                 'HYDROlake_id' = lk_hover()$Hylak_id,
+                                 'comments' = input$notes)
+
+    }else{
+
+
+      data_submit <-  data.frame('siteId' = input$neositeid,
+                                 'HYDROlake_id' = lk_hover()$Hylak_id,
+                                 'polygon' = features$geometry,
+                                 'comments' = input$notes)
+
+    }
+
+    data_submit
+  })
+
+
+# Save user selections as csv
+  output$submit <- downloadHandler(
+    filename = function(){
+      paste0("lake_",
+             input$neositeid,
+             ".csv")},
+    content = function(fname){
+      write.csv(data_submit(), fname)
+    }
+  )
+
+
+  # Display user comments in the screen
+
+  output$notes <- renderText({ input$notes })
 
 }
 
