@@ -566,6 +566,21 @@
       ],
       "Hash": "c992f75861325961c29a188b45e549f7"
     },
+    "httr": {
+      "Package": "httr",
+      "Version": "1.4.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "R6",
+        "curl",
+        "jsonlite",
+        "mime",
+        "openssl"
+      ],
+      "Hash": "ac107251d9d9fd72f0ca8049988f1d7f"
+    },
     "isoband": {
       "Package": "isoband",
       "Version": "0.2.7",
@@ -755,6 +770,19 @@
       ],
       "Hash": "b8552d117e1b808b09a832f589b79035"
     },
+    "lwgeom": {
+      "Package": "lwgeom",
+      "Version": "0.2-13",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "sf",
+        "units"
+      ],
+      "Hash": "9804362cc0267990ac61a85edeca73ed"
+    },
     "magrittr": {
       "Package": "magrittr",
       "Version": "2.0.3",
@@ -764,6 +792,19 @@
         "R"
       ],
       "Hash": "7ce2733a9826b3aeb1775d56fd305472"
+    },
+    "markdown": {
+      "Package": "markdown",
+      "Version": "1.11",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "commonmark",
+        "utils",
+        "xfun"
+      ],
+      "Hash": "82b8d62b5451f8adea7d11a99dfea633"
     },
     "memoise": {
       "Package": "memoise",
@@ -1006,6 +1047,22 @@
       ],
       "Hash": "d65e35823c817f09f4de424fcdfa812a"
     },
+    "rnaturalearth": {
+      "Package": "rnaturalearth",
+      "Version": "0.3.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "httr",
+        "jsonlite",
+        "sf",
+        "sp",
+        "terra",
+        "utils"
+      ],
+      "Hash": "cc93c2e9d777b357103cdc322fb9a649"
+    },
     "rsconnect": {
       "Package": "rsconnect",
       "Version": "1.1.1",
@@ -1148,6 +1205,20 @@
       ],
       "Hash": "5ec01cc255f2138fc2f0dc74d2b1a1a1"
     },
+    "shinyFeedback": {
+      "Package": "shinyFeedback",
+      "Version": "0.4.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "fontawesome",
+        "htmltools",
+        "jsonlite",
+        "shiny"
+      ],
+      "Hash": "88a6b7ff3d135195ad0011fec04336f2"
+    },
     "shinyWidgets": {
       "Package": "shinyWidgets",
       "Version": "0.8.0",
@@ -1255,6 +1326,26 @@
         "methods"
       ],
       "Hash": "c011cc748506148c793428eb8ec101f9"
+    },
+    "thematic": {
+      "Package": "thematic",
+      "Version": "0.1.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "farver",
+        "ggplot2",
+        "grDevices",
+        "graphics",
+        "grid",
+        "rappdirs",
+        "rlang",
+        "rstudioapi",
+        "scales",
+        "utils"
+      ],
+      "Hash": "ce1b6446f91daec3a5a2cab4274f0bd5"
     },
     "tibble": {
       "Package": "tibble",

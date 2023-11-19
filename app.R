@@ -10,9 +10,11 @@ library(leafem)
 library(tidyr)
 library(ggplot2)
 library(shinyWidgets)
+library(markdown) # needed to use includeMarkdown()
 library(leaflet.extras)
 library(thematic)
 library(shinyFeedback)
+library(lwgeom) # needed to use sf::st_distance()
 library(rnaturalearth)
 
 # https://github.com/r-spatial/sf/issues/1762
@@ -157,13 +159,22 @@ accordion(
  accordion_panel(
    id = "Comments",
    title = "User decision",
-textAreaInput('notes',
+   layout_columns(
+     textOutput('action'),
+     tags$div(
+     textAreaInput('notes',
               label = 'Comments:'),
-downloadButton('submit', 'Submit')),
+     downloadButton('submit', 'Submit')))),
 accordion_panel(
   id = "help",
   title = "How to use this app?",
-  includeMarkdown("help.md")))),
+  tags$img(src = 'img-app.png',
+           height = 'auto',
+           width = '100%'),
+  includeMarkdown("help.md"),
+  tags$img(src = 'img-app-end.png',
+           height = 'auto',
+           width = '100%')))),
     card(
       card_header("HydroLAKES"),
 
@@ -199,8 +210,6 @@ server <- function(input, output, session) {
     })
 # Select site from the database
   neosites_data <- eventReactive(input$search,{
-
-
 
     sites_country |>
        dplyr::mutate(siteid = as.character(siteid)) |>
@@ -276,7 +285,7 @@ server <- function(input, output, session) {
                             weight = 5,
                             color = "darkorange",
                             fillColor = "orange")  |> # neotoma sites
-       fitBounds(lng1 = bbx$xmin[[1]],
+       leaflet::fitBounds(lng1 = bbx$xmin[[1]],
                lat1= bbx$ymin[[1]],
                lng2 = bbx$xmax[[1]],
                lat2 = bbx$ymax[[1]]) |>
@@ -308,12 +317,7 @@ server <- function(input, output, session) {
     }
   )
 
-  observeEvent(input$map_draw_new_feature,{
-    feature <- input$map_draw_new_feature
 
-    print(feature$geometry$coordinates)
-
-  })
 
 # Open the accordion metadata only once the user selects a siteid
 observe({
@@ -335,7 +339,7 @@ observe({
   # Open the accordion to complete and submit comments once they have selected
   # what they want to do with the siteid lake data
   accordion_panel_open(id = 'map_accordion',
-                       value = 'Comments')}
+                       value = 'User decision')}
 })
 
 
@@ -365,7 +369,7 @@ observe({
       prettyRadioButtons( # or prettyRadioButtons
         inputId = "nooptions",
         label = "How would you update NeotomaDB?",
-        choices = c("Replace it with a HYDROLakeDB (preferred)" ,
+        choices = c("Replace with HYDROLake polygon" ,
                     "Create lake polygon"),
         outline = TRUE,
         plain = TRUE,
@@ -425,16 +429,15 @@ observe({
 
   # Hydrolake clicked distance to NeotomaDB selected point
   output$dist <- renderText({
+    req(input$search)
 
+    # Message
     validate(
       need(!is.null(input$map_shape_click), "Please, click one of the HYDROlakes in the map")
     )
 
     neosites_data = neosites_data() |> st_transform(4326)
     lk_click = lk_click() |> st_transform(4326)
-
-    print(lk_click)
-    print(neosites_data)
 
     paste0("Distance within the site: ",
            round((st_distance(lk_click, neosites_data))/1000,
@@ -512,7 +515,7 @@ observe({
 })
 
 
-# Add
+# Add country name
 
   output$countryinfo <- renderText({
 
@@ -523,8 +526,6 @@ observe({
 
       paste("Country:", as.character(lk_click()$COUNTRY))
 
-
-
     }
   })
 
@@ -532,8 +533,50 @@ observe({
   # Display user comments in the screen
   output$notes <- renderText({ input$notes })
 
+  # Text
+  output$action <- renderText({
+
+
+
+    if(input$modify == 'Yes'){
+
+      paste("The NeotomaDB site", input$neositeid, "is correct and don't need to be replaced")
+
+    }else if(input$nooptions == "Replace with HYDROLake polygon"){
+
+
+      # Message
+      validate(
+        need(!is.null(input$map_shape_click), "Please, click one of the HYDROlakes in the map")
+      )
+
+      paste("The NeotomaDB site", input$neositeid,
+            "should be replaced with the HYDROLakeDB",
+            lk_click()$Hylak_id)
+
+    }else{
+
+      # Message
+      validate(
+        need(!is.null(input$map_draw_new_feature), "Please, create a polygon in the map")
+      )
+
+
+      paste("The NeotomaDB site", input$neositeid,
+            "can be replaced with the polygon that I am submitting")
+    }
+
+  })
+
+  observe({
+
+
+  })
+
+
   # Subset of data to send in relation with user input
   data_submit <- reactive({
+
 
 
     if(input$modify == 'Yes'){
@@ -541,23 +584,40 @@ observe({
      data_submit <-  data.frame('siteId' = input$neositeid,
                                  'comments' = input$notes)
 
-    }else if(input$modify == "No" & input$nooptions == "No"){
+    }else if(input$modify == "No" & input$nooptions == "Replace with HYDROLake polygon"){
 
       data_submit <-  data.frame('siteId' = input$neositeid,
                                  'HYDROlake_id' = lk_click()$Hylak_id,
                                  'comments' = input$notes)
 
-    }else{
+    }else if(input$modify == "No" & input$nooptions == "Create lake polygon"){
+
+
+
+      if(!is.null(input$map_draw_new_feature)){
+        # list of lists
+        coords = input$map_draw_new_feature$geometry$coordinates
+        print(coords)
+        coords_matrix <- sapply(coords[[1]], unlist)
+        polygon <- st_polygon(list(t(coords_matrix)))
+        polygon_sf <- st_sfc(polygon, crs = 4326)
+        print(polygon_sf)
+
+
+      }
 
 
       data_submit <-  data.frame('siteId' = input$neositeid,
-                                 'HYDROlake_id' = lk_click()$Hylak_id,
-                                 'polygon' = features$geometry,
                                  'comments' = input$notes)
 
-    }
+      print(data_submit)
+      poly_submit = st_sf(data_submit, geometry = polygon_sf)
+      print(poly_submit)
+      poly_submit
+     }
 
-    data_submit
+
+
   })
 
 
@@ -568,7 +628,25 @@ observe({
              input$neositeid,
              ".csv")},
     content = function(fname){
-      write.csv(data_submit(), fname)
+
+
+      if(input$modify == 'Yes'){
+
+        print(data_submit())
+        write.csv(data_submit(), fname)
+
+      }else if(input$modify == 'No' & input$nooptions == 'Create lake polygon'){
+
+        print(data_submit())
+        st_write(data_submit(), fname, layer_options = "GEOMETRY=AS_WKT")
+
+      }else{
+
+        print(data_submit())
+        write.csv(data_submit(), fname)
+
+      }
+
     }
   )
 
