@@ -315,12 +315,31 @@ server <- function(input, output, session) {
 
     proxy <- leafletProxy('map')
 
+    print(input$nooptions)
+
    if(input$removelakes == TRUE){
        proxy |>  hideGroup('lakes')
    }else{
        proxy |>  showGroup('lakes')}
     }
   )
+
+
+  # The user can request to hide the lakes layer
+  observe({
+        req(input$nooptions)
+
+        proxy <- leafletProxy('map')
+
+    if(input$modify == 'No' &&
+       input$nooptions == "Create lake polygon"){
+
+      proxy |>  hideGroup('lakes')
+
+    }else{
+      proxy |>  showGroup('lakes')}
+
+      proxy <- leafletProxy('map')})
 
 
 
@@ -438,7 +457,8 @@ observe({
 
     # Message
     validate(
-      need(!is.null(input$map_shape_click), "Please, click one of the HYDROlakes in the map")
+      need(!is.null(input$map_shape_click),
+           "Please, click one of the HYDROlakes in the map")
     )
 
     neosites_data = neosites_data() |> st_transform(4326)
@@ -521,7 +541,6 @@ observe({
 
 
 # Add country name
-
   output$countryinfo <- renderText({
 
     req(input$map_shape_click$id)
