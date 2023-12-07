@@ -298,7 +298,12 @@ server <- function(input, output, session) {
    if(!is.null(input$nooptions) && input$nooptions == "Create lake polygon"){
 
     lm |>
-      leaflet.extras::addDrawToolbar(markerOptions = FALSE)
+      leaflet.extras::addDrawToolbar(markerOptions = FALSE,
+                                     circleMarkerOptions = FALSE,
+                                     polylineOptions = FALSE,
+                                     circleOptions = FALSE,
+                                     rectangleOptions = FALSE,
+                                     singleFeature = TRUE)
 
    }else{ lm }
 
