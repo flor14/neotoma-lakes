@@ -198,6 +198,7 @@ ui <-  bslib::page_navbar(
   title = "NeotomaDB",
   theme = bslib::bs_theme(version = 5,
                           bootswatch = "minty",
+                          navbar_bg = "#1b3964",
                    base_font = font_google("Raleway",
                                            wght = "400"),
                    heading_font = font_google("Raleway",
