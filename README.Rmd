@@ -1,14 +1,23 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 # Neotoma Lakes App <img src="www/neotomalakes_logo.png" align="right" height="250" />
 
 <!-- badges: start -->
-
 [![test-coverage](https://github.com/flor14/neotoma-lakes/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/flor14/neotoma-lakes/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
-The goal of neotoma-lakes is to …
+The goal of neotoma-lakes is to ...
 
 TBD
 
@@ -17,3 +26,4 @@ TBD
 ## Code of Conduct
 
 ## References
+
