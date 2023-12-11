@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![test-coverage](https://github.com/flor14/neotoma-lakes/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/flor14/neotoma-lakes/actions/workflows/test-coverage.yaml)
+[![check-app](https://github.com/flor14/neotoma-lakes/actions/workflows/check-app.yaml/badge.svg)](https://github.com/flor14/neotoma-lakes/actions/workflows/check-app.yaml)
 [![codecov](https://codecov.io/gh/flor14/neotoma-lakes/branch/main/graph/badge.svg)](https://codecov.io/gh/flor14/neotoma-lakes)
 <!-- badges: end -->
 
