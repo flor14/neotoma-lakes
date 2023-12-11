@@ -166,8 +166,8 @@ accordion_center <- accordion(
 
 accordion_right <- accordion(
   id = "lakes_or_polygons",
-  open = "Hydrolakes DB",
   height="100%",
+  open = FALSE,
   accordion_panel(
     id = "lakes",
     title = "Hydrolakes DB",
@@ -198,6 +198,7 @@ ui <-  bslib::page_navbar(
   theme = bslib::bs_theme(version = 5,
                           bootswatch = "minty",
                           navbar_bg = "#1b3964",
+                          primary = "#1b3964",
                    base_font = font_google("Raleway",
                                            wght = "400"),
                    heading_font = font_google("Raleway",
@@ -211,8 +212,8 @@ ui <-  bslib::page_navbar(
                              sidebar = sidebar(width = 300,
                                               bg = 'white',
  textInput('neositeid',
-           'SiteId',
-           placeholder = "write here"),
+           'NeotomaDB',
+           placeholder = "Insert siteID"),
  tooltip(
  shiny::actionButton('search', 'Search!'),
  paste("Check sitesid in the webpage.",
