@@ -5,11 +5,12 @@
 
 <!-- badges: start -->
 
-[![test-coverage](https://github.com/flor14/neotoma-lakes/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/flor14/neotoma-lakes/actions/workflows/test-coverage.yaml)
+[![check-app](https://github.com/flor14/neotoma-lakes/actions/workflows/check-app.yaml/badge.svg)](https://github.com/flor14/neotoma-lakes/actions/workflows/check-app.yaml)
 [![codecov](https://codecov.io/gh/flor14/neotoma-lakes/branch/main/graph/badge.svg)](https://codecov.io/gh/flor14/neotoma-lakes)
 <!-- badges: end -->
 
-The Neotoma Paleoecology Database (“Neotoma”) is more than a database!
+The [Neotoma Paleoecology Database
+(“Neotoma”)](https://www.neotomadb.org/) is more than a database!
 Neotoma is a database, a software ecosystem, and a community.
 
 Neotoma provides an underlying cyberinfrastructure that enables the
@@ -24,10 +25,10 @@ improving lake entries within the Neotoma database.
 
 1.  Begin by entering the SiteID: ![](www/siteid_screen.png)
 
-2.  2.  Water bodies from the [Hydrolake
+2.  2.  Water bodies from the [Hydrolakes
         DB](https://wp.geog.mcgill.ca/hydrolab/hydrolakes/) near the
         site will be displayed in blue. Clicking on these water bodies
-        allows you to access information within the HYDROLAKE DB
+        allows you to access information within the Hydrolakes DB
         associated with each lake on the right panel. If one of these
         lakes represents better the Neotoma DB Site, you can submit it
         along with comments. ![](www/hydrolakes_screen.png)
