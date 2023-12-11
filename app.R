@@ -23,15 +23,9 @@ sf_use_s2(FALSE)
 # Apply the app style to ggplot2 plots
 thematic::thematic_shiny()
 
-# sites <- read.csv('../Dropbox/neotoma_project/sites_20231101_.csv')
-#
-# lakes <- st_read('../Dropbox/neotoma_project/HydroLAKES_polys_v10_shp/HydroLAKES_polys_v10_shp') |>
-#   select(Hylak_id, Lake_name, Country, Vol_total, Shore_len, Depth_avg, Elevation, geometry)
 
-
-# # I select some countries to try the app. Later I will use all.
-#
-#
+# COUNTRIES
+# # I select some countries to try the app.
 # mdg <- st_read('data/gadm41_MDG.gpkg') |>
 #    st_simplify(preserveTopology = TRUE)
 # prt <- st_read('data/gadm41_PRT.gpkg') |>
@@ -42,13 +36,17 @@ thematic::thematic_shiny()
 #   st_simplify(preserveTopology = TRUE)
 #
 # countries =  countries_sf = rbind(jpn, prt, mdg)
-#
+
+# Save country polygons
 # write_sf(countries_sf, 'data/countries.gpkg')
 
 countries_sf <- st_read('data/countries.gpkg') |> st_transform(3857) |>
   st_simplify(preserveTopology = TRUE, dTolerance=100)
 
-# st_geometry(countries) <- NULL
+# st_geometry(countries_sf) <- NULL
+
+# NEOTOMADB SITES
+# sites <- read.csv('../Dropbox/neotoma_project/sites_20231101_.csv')
 
 # #Some sites are points and other ones are polygons
 # pointsites <- sites[stringr::str_detect(sites$geog, pattern = "POINT"), ] |>
@@ -71,16 +69,17 @@ countries_sf <- st_read('data/countries.gpkg') |> st_transform(3857) |>
 # #extra step= removing sites of countries that aren't in the demo
 # datasf_country = st_filter(datasf, countries_sf)
 
-# lakes_country <- countries |> left_join(lakes, by = c('COUNTRY' = 'Country'))
-
-#|>
-#    st_transform(3857) |>
-#    st_simplify(preserveTopology = TRUE,
-#               dTolerance = 100) |>
-#    st_transform(4326)
-# write_sf(lakes_country, "data/lakes_country.gpkg")
-lakes_country <- st_read("data/lakes_country.gpkg") |> st_transform(3857)
+# HYDROLAKESDB
+# lakes <- st_read('../Dropbox/neotoma_project/HydroLAKES_polys_v10_shp/HydroLAKES_polys_v10_shp') |>
+#   select(Hylak_id, Lake_name, Country, Vol_total, Lake_area, Shore_len, Depth_avg, Elevation, geometry)
+# lakes_country <- countries_sf |>
+# left_join(lakes, by = c('COUNTRY' = 'Country'))
 #
+# write_sf(lakes_country, "data/lakes_country.gpkg")
+
+lakes_country <- st_read("data/lakes_country.gpkg") |>
+  st_transform(3857)
+
 #  sites_country <- datasf |> st_join(countries_sf, left = TRUE) |> tidyr::drop_na(COUNTRY)
 # write_sf(datasf_country, "data/sites_country.gpkg")
 sites_country <- st_read("data/sites_country.gpkg")
@@ -137,7 +136,7 @@ accordion_center <- accordion(
   height="100%",
   accordion_panel(
     id = "Map",
-    title = "Map displaying NeotomaDB and HYDROlakeDB",
+    title = "Map of the site area",
     class = 'p-0',
     shinycssloaders::withSpinner(
       leafletOutput('map',
@@ -300,10 +299,7 @@ server <- function(input, output, session) {
                             weight = 5,
                             color = "blue",
                             fillColor = "lightblue") |> # hydrolakes
-       leaflet::addCircles(data = neosites_data,
-                           weight = 5,
-                           color = "darkorange",
-                           fillColor = "orange") |> # neotoma sites
+       leaflet::addMarkers(data = neosites_data) |> # neotoma sites
        fitBounds(lng1 = bbx$xmin[[1]],
                  lat1= bbx$ymin[[1]],
                  lng2 = bbx$xmax[[1]],
@@ -387,7 +383,7 @@ observe({
                        value = 'Site metadata')
 
     accordion_panel_open(id = 'map_accordion',
-                         value = 'Map displaying NeotomaDB and HYDROlakeDB')
+                         value = 'Map of the site area')
 
     accordion_panel_close(id = 'map_accordion',
                           value = 'How to use this app?')
@@ -538,14 +534,16 @@ observe({
 
       datalk <- t(data.frame(c('Hylak_id',
                            lk_click()$Hylak_id),
-                           c('Elevation',
+                           c('Elevation (masl)',
                            lk_click()$Elevation),
-                           c('Shore length',
+                           c('Shore length (km)',
                            lk_click()$Shore_len),
-                           c('Depth average',
-                           lk_click()$Depth_avg),
-                           c('Volume total',
-                           lk_click()$Vol_total)))
+                           c('Lake area (km^2)',
+                            lk_click()$Lake_area),
+                           c('Volume total (mcm)',
+                            lk_click()$Vol_total),
+                           c('Depth average (m)',
+                           lk_click()$Depth_avg)))
 
       colnames(datalk) <- NULL
 
@@ -737,24 +735,38 @@ observe({
 
     if(!is.null(input$map_draw_new_feature)){
 
-      bbox <- st_bbox(polygon_sf())
-      units <- st_crs(polygon_sf(),
-                      parameters = TRUE)$units_gdal
+      poly_4326 <- polygon_sf() |>
+        st_transform(4326)
+
+      bbox <- st_bbox(poly_4326)
+
+      area <- st_area(polygon_sf())
+      area <- units::set_units(area,
+                               km^2)
+
+      perimeter <- st_length(st_boundary(polygon_sf()))
+      perimeter <- units::set_units(perimeter,
+                                    km)
+
       print(st_crs(polygon_sf(),
                    parameters = TRUE))
       datap <- t(data.frame(c('Min Latitude',
-                              bbox$xmin),
+                              round(bbox$xmin,
+                                    digit = 2)),
                             c('Max Latitude',
-                              bbox$xmax),
+                              round(bbox$xmax,
+                                    digit = 2)),
                             c('Min Longitude',
-                              bbox$ymin),
+                              round(bbox$ymin,
+                                    digit = 2)),
                             c('Max Longitude',
-                              bbox$ymax),
-                            c(paste0('Area (', units, ')'),
-                               round(st_area(polygon_sf()),
+                              round(bbox$ymax,
+                                    digit = 2)),
+                            c(paste0('Area (km^2)'),
+                               round(area,
                                      digits = 2)),
-                             c(paste0('Shore length (', units, ')'),
-                               round(st_length(st_boundary(polygon_sf())),
+                             c(paste0('Shore length (km)'),
+                               round(perimeter,
                                      digits = 2))))
 
       colnames(datap) <- NULL
