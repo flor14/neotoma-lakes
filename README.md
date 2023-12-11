@@ -37,6 +37,16 @@ improving lake entries within the Neotoma database.
     in the right panel and submitting it to improe the database.
     ![](www/create_poly_screen.png)
 
+## Run the project locally
+
+If you want to run this app you can install R and run inside the folder
+of this project:
+
+    #install.packages("renv")
+    library(renv)
+    renv::restore()
+    shiny::runApp()
+
 ## Do you want to contribute?
 
 - Join the [Neotoma
