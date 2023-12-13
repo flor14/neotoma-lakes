@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![check-app](https://github.com/flor14/neotoma-lakes/actions/workflows/check-app.yaml/badge.svg)](https://github.com/flor14/neotoma-lakes/actions/workflows/check-app.yaml)
 [![codecov](https://codecov.io/gh/flor14/neotoma-lakes/branch/main/graph/badge.svg)](https://codecov.io/gh/flor14/neotoma-lakes)
 <!-- badges: end -->
@@ -23,29 +25,26 @@ control over critical taxonomic and other data quality issues.
 The Neotoma Lakes app is an R-Shiny application designed to assist in
 improving lake entries within the Neotoma database.
 
-1.  Begin by entering the SiteID: ![](www/siteid_screen.png)
+1.  Begin by entering the SiteID: ![](inst/app/www/siteid_screen.png)
 2.  Water bodies from the [Hydrolakes
     DB](https://wp.geog.mcgill.ca/hydrolab/hydrolakes/) near the site
     will be displayed in blue. Clicking on these water bodies allows you
     to access information within the Hydrolakes DB associated with each
     lake on the right panel. If one of these lakes represents better the
     Neotoma DB Site, you can submit it along with comments.
-    ![](www/hydrolakes_screen.png)
+    ![](inst/app/www/hydrolakes_screen.png)
 3.  If you cannot find a polygon representing your water body in the
     Hydrolakes DB, you have the option to create your own polygon. In
     doing so, you’ll be able to view the information about the polygon
     in the right panel and submitting it to improe the database.
-    ![](www/create_poly_screen.png)
+    ![](inst/app/www/create_poly_screen.png)
 
 ## Run the project locally
 
-If you want to run this app you can install R and run inside the folder
-of this project:
+If you want to run this app you can clone this repository and run:
 
-    #install.packages("renv")
-    library(renv)
-    renv::restore()
-    shiny::runApp()
+    # install.packages("devtools")
+    devtools::install_github("flor14/neotomalakes")
 
 ## Do you want to contribute?
 
