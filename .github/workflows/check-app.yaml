@@ -34,6 +34,11 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
 
+      - name: Install GDAL, Proj, and GEOS development libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev
+
       - uses: r-lib/actions/setup-renv@v2
 
       - uses: rstudio/shinytest2/actions/test-app@v1

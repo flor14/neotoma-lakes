@@ -37,17 +37,55 @@ improving lake entries within the Neotoma database.
     in the right panel and submitting it to improe the database.
     ![](www/create_poly_screen.png)
 
-## Run the project locally
+## App Access and Local Deployment
 
-If you want to run this app you can install R and run inside the folder
-of this project:
+#### Accessing the App
 
-    #install.packages("renv")
-    library(renv)
-    renv::restore()
-    shiny::runApp()
+The application can be accessed through the link available in the
+‘About’ section of this GitHub repository.
 
-## Do you want to contribute?
+#### Running the App Locally
+
+To run the app on your local machine using Docker, follow these steps:
+
+1 - Clone or Download the Repository Example using the terminal:
+
+    git clone git@github.com:flor14/neotoma-lakes.git
+
+2 - Install Docker Desktop
+
+Install [Docker
+Desktop](https://www.docker.com/products/docker-desktop/) if you haven’t
+done so yet and open it.
+
+3 - Building the App
+
+Navigate to the folder where the project is located. Execute the
+`docker build` command to generate the Docker image:
+
+    cd neotomalakes
+    docker build -t neotomalakesapp .
+
+This step can take some minutes. Then, start the app with this command:
+
+    docker run --rm -p 3838:3838 neotomalakesapp
+
+The app will now be accessible locally at `http://localhost:3838`.
+
+## Community guidelines
+
+Report Issues:
+
+- Questions, feedback, bug reports: please open an issue in the issue
+  tracker of the project
+  [here](https://github.com/flor14/neotoma-lakes/issues).
+
+Contribution to the software:
+
+- Please open an issue in the issue tracker of the project that
+  describes the changes you would like to make to the software and open
+  a pull request with the changes. The description of the pull request
+  must reference the corresponding issue.
 
 - Join the [Neotoma
   Community](https://www.neotomadb.org/about/join-the-neotoma-community)
