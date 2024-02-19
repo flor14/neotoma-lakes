@@ -20,65 +20,17 @@ library(rnaturalearth)
 # https://github.com/r-spatial/sf/issues/1762
 sf::sf_use_s2(FALSE)
 
+# Read data
 
-# COUNTRIES
-# # I select some countries to try the app.
-# mdg <- st_read('data/gadm41_MDG.gpkg') |>
-#    st_simplify(preserveTopology = TRUE)
-# prt <- st_read('data/gadm41_PRT.gpkg') |>
-#    st_simplify(preserveTopology = TRUE)
-# # arg <- st_read('data/gadm41_ARG.gpkg') |>
-# #   st_simplify(preserveTopology = TRUE)
-# jpn <- st_read('data/gadm41_JPN.gpkg') |>
-#   st_simplify(preserveTopology = TRUE)
-#
-# countries =  countries_sf = rbind(jpn, prt, mdg)
-
-# Save country polygons
-# write_sf(countries_sf, 'data/countries.gpkg')
-
+# Countries
 countries_sf <- st_read('data/countries.gpkg') |> st_transform(3857) |>
   st_simplify(preserveTopology = TRUE, dTolerance=100)
 
-# st_geometry(countries_sf) <- NULL
-
-# NEOTOMADB SITES
-# sites <- read.csv('../Dropbox/neotoma_project/sites_20231101_.csv')
-
-# #Some sites are points and other ones are polygons
-# pointsites <- sites[stringr::str_detect(sites$geog, pattern = "POINT"), ] |>
-#   sf::st_as_sf(wkt = 'geog') |>
-#   select(siteid, sitename, sitedescription, notes, geog) |>
-#   mutate(lonc = sf::st_coordinates(geog)[,1], # need this to setView in leaflet
-#          latc = sf::st_coordinates(geog)[,2])
-#
-# polysites <- sites[stringr::str_detect(sites$geog, pattern = "POLYGON"), ] |>
-#   sf::st_as_sf(wkt = 'geog') |>
-#   select(siteid, sitename, sitedescription, notes, geog) |>
-#   st_simplify(preserveTopology = TRUE,
-#               dTolerance = 100) |>
-#   mutate(centroid = st_point_on_surface(geog),  # need this to setView in leaflet
-#          lonc = sf::st_coordinates(centroid)[,1],
-#          latc = sf::st_coordinates(centroid)[,2]) |>
-#   select(-centroid)
-#
-# datasf <- rbind(pointsites, polysites) |> st_set_crs(4326)
-# #extra step= removing sites of countries that aren't in the demo
-# datasf_country = st_filter(datasf, countries_sf)
-
-# HYDROLAKESDB
-# lakes <- st_read('../Dropbox/neotoma_project/HydroLAKES_polys_v10_shp/HydroLAKES_polys_v10_shp') |>
-#   select(Hylak_id, Lake_name, Country, Vol_total, Lake_area, Shore_len, Depth_avg, Elevation, geometry)
-# lakes_country <- countries_sf |>
-# left_join(lakes, by = c('COUNTRY' = 'Country'))
-#
-# write_sf(lakes_country, "data/lakes_country.gpkg")
-
+# Lakes
 lakes_country <- st_read("data/lakes_country.gpkg") |>
   st_transform(3857)
 
-#  sites_country <- datasf |> st_join(countries_sf, left = TRUE) |> tidyr::drop_na(COUNTRY)
-# write_sf(datasf_country, "data/sites_country.gpkg")
+# Sites
 sites_country <- st_read("data/sites_country.gpkg")
 
 
