@@ -1006,12 +1006,7 @@
     "renv": {
       "Package": "renv",
       "Version": "1.0.3",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "utils"
-      ],
-      "Hash": "41b847654f567341725473431dd0d5ab"
+      "Source": "Repository"
     },
     "rlang": {
       "Package": "rlang",
@@ -1252,6 +1247,11 @@
         "shiny"
       ],
       "Hash": "f39bb3c44a9b496723ec7e86f9a771d8"
+    },
+    "shinyjs": {
+      "Package": "shinyjs",
+      "Version": "2.1.0",
+      "Source": "Repository"
     },
     "sourcetools": {
       "Package": "sourcetools",

@@ -7,7 +7,7 @@ format: html
 # NeotomaLakes app data wrangling
 
 ```{r echo = FALSE}
-library(tidyverse)
+library(tidyverse) #not a good idea for renv
 library(sf)
 ```
 
