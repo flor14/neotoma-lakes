@@ -4,7 +4,7 @@ hydrolakesUI <- function(id) {
     shiny::plotOutput(ns('hydrolake'),
                       height = 190),
     DT::DTOutput(ns('lakeinfo')),
-    shiny::textOutput('dist',
+    shiny::textOutput(ns('dist'),
                       inline = TRUE),
     shiny::textOutput(ns('countryinfo')),
     shiny::plotOutput(ns('country'),
@@ -47,11 +47,11 @@ hydrolakesServer <- function(id,
       )
       mc_text <- eventReactive(lk_click(),{
 
-        mc_neosites_data  <-  neosites_data() |>
+        mc_neosites_data  <-  r_neosites_data() |>
           sf::st_transform(4326)
 
         if(!is.null(mapvalues$map_shape_click())){
-          mc_lk_click  <-  lk_click$df |>
+          mc_lk_click  <-  lk_click() |>
             sf::st_transform(4326)
 
           paste0("Distance within the site: ",
@@ -73,8 +73,6 @@ hydrolakesServer <- function(id,
         mc_text()
 
       })
-
-
 
       # Display plot clicked on the right sidebar
       output$hydrolake <- shiny::renderPlot({

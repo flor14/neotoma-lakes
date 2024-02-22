@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![check-app](https://github.com/flor14/neotoma-lakes/actions/workflows/check-app.yaml/badge.svg)](https://github.com/flor14/neotoma-lakes/actions/workflows/check-app.yaml)
+[![codecov](https://codecov.io/gh/flor14/neotoma-lakes/branch/main/graph/badge.svg)](https://codecov.io/gh/flor14/neotoma-lakes)
 <!-- badges: end -->
 
 The [Neotoma Paleoecology Database
@@ -67,6 +69,9 @@ Navigate to the folder where the project is located. Execute the
 This step can take some minutes. Then, start the app with this command:
 
     docker run --rm -p 3838:3838 neotomalakesapp
+
+**Note:** If you are using a Mac M1/M2, please add the argument
+`--platform linux/amd64` to the last command.
 
 The app will now be accessible locally at `http://localhost:3838`.
 

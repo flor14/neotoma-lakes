@@ -49,38 +49,52 @@ link_slack <- tags$a(shiny::icon("slack"),
 # UI
 ui =  bslib::page_navbar(
   title = "NeotomaDB",
+  tags$head(
+    tags$link(rel = "stylesheet",
+              type = "text/css",
+              href = "style.css"),
+    tags$link(rel = "shortcut icon",
+              href = "water.ico", # https://gauger.io/fonticon/
+              type = "image/x-icon")
+  ),
   theme = bslib::bs_theme(version = 5,
                           bootswatch = "minty",
                           navbar_bg = "#1b3964",
                           primary = "#1b3964",
                           base_font = bslib::font_google("Raleway",
-                                                         wght = "400"),
+                                                         wght = "300"),
                           heading_font = bslib::font_google("Raleway",
-                                                            wght = "200")),
+                                                            wght = "100")),
   bslib::nav_panel(title = "Lakes",
                    shinyFeedback::useShinyFeedback(),
                    bslib::layout_columns(
                      col_widths = c(9, 3),
                      row_heights = list("auto", 1),
-                     bslib::layout_sidebar(class = "p-0",
-                                           sidebar = bslib::sidebar(
+                     bslib::layout_sidebar( class = 'p-0',
+                       sidebar = bslib::sidebar(
+
                                              width = 300,
+                                             title = NULL,
+                                             open = 'always',
                                              bg = 'white',
+                                             bslib::accordion(
+                                               id = 'sidebar_accordion',
+                                               open = c('Start Here',
+                                                        'User options'),
+                                               multiple = TRUE,
+                                               height = "100%",
+                                               bslib::accordion_panel(id = 'starthere',
+                                                                      title = 'Start Here',
                                              shiny::textInput(
-                                               'neositeid',
-                                               'NeotomaDB',
-                                               placeholder = "Insert siteID"),
+                                               inputId = 'neositeid',
+                                               label = NULL,
+                                             placeholder = "Insert Neotoma siteID"),
                                              bslib::tooltip(
                                                shiny::actionButton('search',
                                                                    'Search!'),
                                                paste("Check sitesid in the webpage.",
                                                      "For this demo you can use site 9606",
-                                                     "as an example")),
-                                             bslib::accordion(
-                                               id = 'sidebar_accordion',
-                                               open = 'User options',
-                                               multiple = TRUE,
-                                               height = "100%",
+                                                     "as an example"))),
                                                bslib::accordion_panel(id = 'Site metadata',
                                                                       title = 'Site metadata',
                                                                       metadataUI('mod_metadata')),
@@ -113,12 +127,12 @@ ui =  bslib::page_navbar(
                                                  id = "Comments",
                                                  title = "User decision",
                                                  bslib::layout_columns(
-                                                  userdecisionsUI('mod_user_decisions')#,
-                                                #  submitUI('mod_submit')
+                                                  userdecisionsUI('mod_user_decisions')
                                                  )),
                                            bslib::accordion_panel(
                                              id = "help",
                                              title = "How to use this app?",
+                                             class = 'p-0',
                                              shiny::tags$img(
                                                src = "img-app.png",
                                                height = 'auto',

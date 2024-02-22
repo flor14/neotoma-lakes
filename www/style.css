@@ -1,0 +1,8 @@
+#search {
+    display: block;
+    margin: 0 auto;
+}
+
+div.sidebar-content.bslib-gap-spacing.has-accordion{
+    padding-top: 0 !important;
+}
