@@ -1,14 +1,17 @@
 hydrolakesUI <- function(id) {
   ns <- NS(id)
   tagList(
-    shiny::plotOutput(ns('hydrolake'),
-                      height = 190),
+    layout_columns(
+    # shiny::plotOutput(ns('hydrolake'),
+    #                   height = 50),
+    shiny::textOutput(ns('lakename'))),
     DT::DTOutput(ns('lakeinfo')),
     shiny::textOutput(ns('dist'),
                       inline = TRUE),
     shiny::textOutput(ns('countryinfo')),
     shiny::plotOutput(ns('country'),
-                      height = 190)
+                      height = 150),
+
   )
 }
 
@@ -25,7 +28,6 @@ hydrolakesServer <- function(id,
       lk_click <- eventReactive(map_shape_click(), {
         lake_data_4326  <-  r_lake_data() |>
           sf::st_transform(4326)
-
         if (!is.null(map_shape_click()$id)) {
           # convert hover coordinates in a sfc point
           p  <-
@@ -50,7 +52,7 @@ hydrolakesServer <- function(id,
         mc_neosites_data  <-  r_neosites_data() |>
           sf::st_transform(4326)
 
-        if(!is.null(mapvalues$map_shape_click())){
+        if(!is.null(map_shape_click())){
           mc_lk_click  <-  lk_click() |>
             sf::st_transform(4326)
 
@@ -74,28 +76,32 @@ hydrolakesServer <- function(id,
 
       })
 
-      # Display plot clicked on the right sidebar
-      output$hydrolake <- shiny::renderPlot({
-        shiny::req(r_neosites_data())
-
-        lake_data <- r_lake_data() |>
-          sf::st_transform(4326)
-
-        countries_sf <- countries_sf |>
-          sf::st_transform(4326)
-
-        if (!is.null(map_shape_click()$id)) {
-          # plot polygon of lake of interest
-          ggplot2::ggplot() +
-            ggplot2::geom_sf(data = lk_click(),
-                             fill = 'aliceblue',
-                             lwd = 0.5) +
-            ggplot2::theme_void() +
-            ggplot2::ggtitle(paste(as.character(lk_click()$Lake_name))) +
-            ggplot2::theme(text = ggplot2::element_text(size = 15))
-
-        }
+      # Lake name
+      output$lakename <- renderText({
+        paste('Lake Name:',
+              as.character(lk_click()$Lake_name))
       })
+
+      # # Display plot clicked on the right sidebar
+      # output$hydrolake <- shiny::renderPlot({
+      #   shiny::req(r_neosites_data())
+      #
+      #   lake_data <- r_lake_data() |>
+      #     sf::st_transform(4326)
+      #
+      #   countries_sf <- countries_sf |>
+      #     sf::st_transform(4326)
+      #
+      #   if (!is.null(map_shape_click()$id)) {
+      #     # plot polygon of lake of interest
+      #     ggplot2::ggplot() +
+      #       ggplot2::geom_sf(data = lk_click(),
+      #                        fill = 'aliceblue',
+      #                        lwd = 0.5) +
+      #       ggplot2::theme_void()
+      #
+      #   }
+      # })
 
       # Table with HYDROlakeDB lake clicked data
       output$lakeinfo <- DT::renderDT({

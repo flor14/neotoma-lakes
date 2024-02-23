@@ -1,9 +1,13 @@
 userdecisionsUI <- function(id) {
   ns <- NS(id)
-  tagList(shiny::textOutput(ns('action')),
+  tagList(layout_columns(
+    col_widths = c(4,8),
+          shiny::textOutput(ns('action')),
+          div(
           shiny::tags$div(shiny::textAreaInput(ns('notes'),
-                                               label = 'Comments:')),
-          shiny::downloadButton(ns('submit'), 'Submit'))
+                                               label = 'Comments:',
+                                               width = '100%'),
+          shiny::downloadButton(ns('submit'), 'Submit')))))
 }
 
 userdecisionsServer <- function(id,

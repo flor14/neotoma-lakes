@@ -21,8 +21,7 @@ leafletmapServer <- function(id,
                function(input, output, session) {
                  # Map
                  output$map <- leaflet::renderLeaflet({
-                   print('nsd')
-                   print(r_neosites_data())
+
                    # Creation of a basic map
                    lm  <-   leaflet::leaflet() |>
                      leaflet::addTiles(group = "OpenStreetMap") |>
@@ -47,17 +46,17 @@ leafletmapServer <- function(id,
                                          secondaryLengthUnit = "kilometers")
 
 
-                   neosites_data = r_neosites_data() |>
+                   r_neosites_data  <- r_neosites_data() |>
                      sf::st_transform(4326)
                    lake_data = r_lake_data() |>
                      sf::st_transform(4326)
 
                    # To zoom in the map
-                   bbx = sf::st_bbox(sf::st_union(neosites_data,
+                   bbx = sf::st_bbox(sf::st_union(r_neosites_data,
                                                   lake_data))
 
                    # The NeotomaDB site could be a point or a polygon
-                   if (sf::st_is(neosites_data, "POINT")) {
+                   if (sf::st_is(r_neosites_data, "POINT")) {
                      lm  <-   lm |>
                        leaflet::addPolygons(
                          data = lake_data,
@@ -68,7 +67,7 @@ leafletmapServer <- function(id,
                          color = "blue",
                          fillColor = "lightblue"
                        ) |> # hydrolakes
-                       leaflet::addMarkers(data = neosites_data) |> # neotoma sites
+                       leaflet::addMarkers(data = r_neosites_data) |> # neotoma sites
                        leaflet::fitBounds(
                          lng1 = bbx$xmin[[1]],
                          lat1 = bbx$ymin[[1]],
@@ -89,9 +88,9 @@ leafletmapServer <- function(id,
                          fillColor = "lightblue"
                        ) |> # hydrolakes
                        leaflet::addPolygons(
-                         data = neosites_data(),
+                         data = r_neosites_data,
                          weight = 5,
-                         color = "#A5243D",
+                         color = "#DB576B",
                          fillColor = "pink"
                        ) |> # neotoma sites
                        leaflet::fitBounds(

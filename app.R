@@ -48,7 +48,7 @@ link_slack <- tags$a(shiny::icon("slack"),
 
 # UI
 ui =  bslib::page_navbar(
-  title = "NeotomaDB",
+  title = "Neotoma",
   tags$head(
     tags$link(rel = "stylesheet",
               type = "text/css",
@@ -85,6 +85,7 @@ ui =  bslib::page_navbar(
                                                height = "100%",
                                                bslib::accordion_panel(id = 'starthere',
                                                                       title = 'Start Here',
+                                                                      icon = shiny::icon('arrow-down'),
                                              shiny::textInput(
                                                inputId = 'neositeid',
                                                label = NULL,
@@ -138,7 +139,7 @@ ui =  bslib::page_navbar(
                                                height = 'auto',
                                                width = '100%'
                                              ),
-                                             shiny::includeMarkdown("help.md"),
+                                             shiny::includeMarkdown("www/help.md"),
                                              shiny::tags$img(
                                                src = "img-app-end.png",
                                                height = 'auto',
@@ -149,8 +150,8 @@ ui =  bslib::page_navbar(
                                            ), # closes layout sidebar
                                            bslib::accordion(
                                              id = "lakes_or_polygons",
+                                             open = c('About'),
                                              height = "100%",
-                                             open = FALSE,
                                              bslib::accordion_panel(
                                                id = "lakes",
                                                title = "Hydrolakes DB",
@@ -160,6 +161,11 @@ ui =  bslib::page_navbar(
                                                id = "polygon",
                                                title = "Polygon",
                                                createpolygonUI('mod_create_polygon')
+                                             ),
+                                             bslib::accordion_panel(
+                                               id = "about",
+                                               title = "About",
+                                               shiny::includeMarkdown("www/logo.md")
                                              )
                                            ) # closes accordion right
                      ) #layout columns
@@ -219,16 +225,7 @@ server = function(input, output, session) {
                                   lk_click = hydrolakes$lk_click,
                                   polygon_sf = newpolygon$polygon_sf)
 
- # button <-  submitServer('mod_submit',
- #               r_neositeid = reactive({ input$neositeid }),
- #               modify = values$modify,
- #               nooptions = values$nooptions,
- #               lk_click = hydrolakes$lk_click,
- #               notes = decision$notes,
- #               map_draw_new_feature = mapvalues$map_draw_new_feature,
- #               polygon_sf = newpolygon$polygon_sf)
-
-  # right accordion
+ # right accordion
  hydrolakes <-  hydrolakesServer('mod_hydrolakes',
                    countries_sf = countries_sf,
                    r_neosites_data = reactive({ neosites_data() }),
@@ -268,6 +265,9 @@ server = function(input, output, session) {
 
       bslib::accordion_panel_open(id = 'lakes_or_polygons',
                                   value = 'Hydrolakes DB')
+
+      bslib::accordion_panel_close(id = 'lakes_or_polygons',
+                                  value = 'About')
   }
 
     if(values$modify() == "No"){
@@ -298,4 +298,4 @@ server = function(input, output, session) {
                                   value = 'Hydrolakes DB')}
   })
 }
-shinyApp(ui, server)
+shinyApp(ui = ui, server = server)

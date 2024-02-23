@@ -5,9 +5,9 @@ account: flor
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 10513624
-bundleId: 8282693
+bundleId: 8291043
 url: https://flor.shinyapps.io/neotoma-lakes/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .github/workflows/check-app.yaml|.github/workflows/deploy-app.yaml|.Rprofile|Dockerfile|README.md|README.Rmd|tests
+ignoredFiles: .github/workflows/check-app.yaml|.github/workflows/deploy-app.yaml|.Rprofile|Dockerfile|README.md|README.Rmd
