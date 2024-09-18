@@ -14,59 +14,62 @@ knitr::opts_chunk$set(
 # Neotoma Lakes App <img src="www/neotomalakes_logo.png" align="right" height="200" />
 
 <!-- badges: start -->
+[![NSF-1948926](https://img.shields.io/badge/NSF-1948926-blue.svg)](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1948926)
 [![check-app](https://github.com/flor14/neotoma-lakes/actions/workflows/check-app.yaml/badge.svg)](https://github.com/flor14/neotoma-lakes/actions/workflows/check-app.yaml)
 [![codecov](https://codecov.io/gh/flor14/neotoma-lakes/branch/main/graph/badge.svg)](https://codecov.io/gh/flor14/neotoma-lakes)
 <!-- badges: end -->
 
-The [Neotoma Paleoecology Database (“Neotoma”)](https://www.neotomadb.org/) is
-more than a database! Neotoma is a database, a software ecosystem, and a community.
+The [Neotoma Paleoecology Database (“Neotoma”)](https://www.neotomadb.org/) is more than a database! Neotoma is a database, a software ecosystem, and a community.
 
-Neotoma provides an underlying cyberinfrastructure that enables the development
-of common software tools for data ingest, discovery, display, analysis, and
-distribution, while giving domain scientists control over critical taxonomic 
-and other data quality issues.
+Neotoma provides an underlying cyberinfrastructure that enables the development of common software tools for data ingest, discovery, display, analysis, and distribution, while giving domain scientists control over critical taxonomic  and other data quality issues.
+
+A critical element of the underlying Neotoma infrastructure is the stewardship of Neotoma data, both during the data upload process, and the ongoing stewardship of data as new data becomes available.  For many lake sites, early software limitations meant that data could only be entered in as a point or a simple bounding box. As our research questions have become more complex, we've recognized the need for more detailed spatial data, including information about lake area, elevation and even lake bathymetry that the legacy data does not support.
+
+This project aims to help researchers improve Neotoma legacy data by linking Neotoma sites to lake metadata encoded within the Lakes10k project.
 
 ## What is Neotoma Lakes app?
 
-The Neotoma Lakes app is an R-Shiny application designed to assist in improving
-lake entries within the Neotoma database.
+The Neotoma Lakes app is an R-Shiny application designed to assist in improving lake entries within the Neotoma database.
 
 1. Begin by entering the SiteID:
-![](www/siteid_screen.png)
-2. Water bodies from the [Hydrolakes DB](https://wp.geog.mcgill.ca/hydrolab/hydrolakes/) near the site will be displayed in blue. 
-Clicking on these water bodies allows you to access information within 
-the Hydrolakes DB associated with each lake on the right panel. If one of these
-lakes represents better the Neotoma DB Site, you can submit it along with comments.
-![](www/hydrolakes_screen.png)
-3. If you cannot find a polygon representing your water body in the Hydrolakes
-DB, you have the option to create your own polygon. In doing so, you'll be able 
-to view the information about the polygon in the right panel and submitting it
-to improe the database.
-![](www/create_poly_screen.png)
+
+![Entering a single site identifier to locate a lake spatially.](www/siteid_screen.png)
+
+2. Water bodies from the [Hydrolakes DB](https://wp.geog.mcgill.ca/hydrolab/hydrolakes/) near the site will be displayed in blue. Clicking on these water bodies allows you to access information within the Hydrolakes DB associated with each lake on the right panel. If one of these lakes represents better the Neotoma DB Site, you can submit it along with comments.
+
+![A screenshot of the the spatial representation of the site, along with associated (and nearby) lakes from the HydroLakes database.](www/hydrolakes_screen.png)
+
+3. If you cannot find a polygon representing your water body in the Hydrolakes DB, you have the option to create your own polygon. In doing so, you'll be able to view the information about the polygon in the right panel and submitting it to improve the database.
+
+![A screenshot of the editor, with the option to add a new site polygon based on site information.](www/create_poly_screen.png)
+
+## Development
+
+* [Simon Goring](http://goring.org): University of Wisconsin - Madison [![orcid](https://img.shields.io/badge/orcid-0000--0002--2700--4605-brightgreen.svg)](https://orcid.org/0000-0002-2700-4605)
+* [Florencia D'Andrea](https://florencia.netlify.app/) [![orcid](https://img.shields.io/badge/orcid-0000--0002--0041--097X-brightgreen.svg)](https://orcid.org/0000-0002-0041-097X)
 
 ## App Access and Local Deployment
-#### Accessing the App
 
-The application can be accessed through the link available in the 'About' 
-section of this GitHub repository.
+### Accessing the App
+
+The application can be accessed through the link available in the 'About' section of this GitHub repository.
 
 #### Running the App Locally
 
 To run the app on your local machine using Docker, follow these steps:
 
-1 - Clone or Download the Repository
+1. Clone or Download the Repository
 Example using the terminal:
 
 ```
 git clone git@github.com:flor14/neotoma-lakes.git
 ```
 
-2 - Install Docker Desktop
+2. Install Docker Desktop
 
-Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) 
-if you haven't done so yet and open it.
+Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) if you haven't done so yet and open it.
 
-3 - Building the App
+1. Building the App
 
 Navigate to the folder where the project is located.
 Execute the `docker build` command to generate the Docker image:
@@ -81,22 +84,19 @@ This step can take some minutes. Then, start the app with this command:
 ```
 docker run --rm -p 3838:3838 neotomalakesapp
 ```
-**Note:** If you are using a Mac M1/M2, 
-please add the argument `--platform linux/amd64`
-to the last command.
+
+**Note:** If you are using a Mac M1/M2, please add the argument `--platform linux/amd64` to the last command.
 
 The app will now be accessible locally at `http://localhost:3838`.
 
 ## Community guidelines
 
-Report Issues:
+### Report Issues
 
-- Questions, feedback, bug reports: please open an issue in the issue tracker of the project [here](https://github.com/flor14/neotoma-lakes/issues).
+Questions, feedback, bug reports: please open an issue in the issue tracker of the project [here](https://github.com/flor14/neotoma-lakes/issues).
 
-Contribution to the software:
+### Contribution to the software
 
-- Please open an issue in the issue tracker of the project that describes the changes you would like to make to the software and open a pull request with the changes. The description of the pull request must reference the corresponding issue.
+Please open an issue in the issue tracker of the project that describes the changes you would like to make to the software and open a pull request with the changes. The description of the pull request must reference the corresponding issue.
 
-- Join the [Neotoma Community](https://www.neotomadb.org/about/join-the-neotoma-community)
-
-
+Join the [Neotoma Community](https://www.neotomadb.org/about/join-the-neotoma-community)
