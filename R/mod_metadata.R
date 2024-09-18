@@ -1,4 +1,4 @@
-metadataUI <- function(id) {
+metadataUI <- function(id){
   ns <- NS(id)
   tagList(
     DT::DTOutput(ns('metadata'))
@@ -6,7 +6,7 @@ metadataUI <- function(id) {
 }
 
 metadataServer <- function(id,
-                           r_neosites_data) {
+                           r_neosites_data){
   moduleServer(
     id,
     function(input, output, session) {

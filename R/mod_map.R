@@ -3,7 +3,7 @@ leafletmapUI <- function(id) {
   tagList(
     shinycssloaders::withSpinner(
       leaflet::leafletOutput(ns('map'),
-                             height = 620),
+                             height = 450),
       type = 2,
       color = '#1b3964',
       color.background = 'white'
@@ -48,7 +48,7 @@ leafletmapServer <- function(id,
 
                    r_neosites_data  <- r_neosites_data() |>
                      sf::st_transform(4326)
-                   lake_data = r_lake_data() |>
+                   lake_data <- r_lake_data() |>
                      sf::st_transform(4326)
 
                    # To zoom in the map
@@ -125,7 +125,7 @@ leafletmapServer <- function(id,
 
                    proxy <- leaflet::leafletProxy('map')
 
-                   if (modify() == 'No' &&
+                   if (modify() == 'Update Current Location' &&
                        nooptions() == "Create lake polygon") {
                      proxy |>  leaflet::hideGroup('lakes')
                    } else{

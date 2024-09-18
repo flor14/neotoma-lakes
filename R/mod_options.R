@@ -3,11 +3,13 @@ optionsUI <- function(id) {
   tagList(
     shinyWidgets::prettyRadioButtons(
       inputId = ns("modify"),
-      label = "Is this site the correct lake polygon in NeotomaDB?",
-      choices = c("Yes", "No"),
-      selected = "Yes",
-      outline = TRUE,
-      plain = TRUE,
+      label = NULL,
+      choices = c("No action",
+                  "Accept Current Location",
+                  "Update Current Location"),
+      selected = "No action",
+     # outline = NULL,
+     # plain = TRUE,
       status = "primary",
       icon = shiny::icon("check")
     ),
@@ -17,20 +19,34 @@ optionsUI <- function(id) {
 
 }
 
-optionsServer <- function(id) {
+optionsServer <- function(id,
+                          r_neositeid) {
   moduleServer(id,
                function(input, output, session) {
                  ns <- session$ns
-                 # Add radiobuttons if the user selects 'no' as option
+
+                 observe({
+                   # Message
+                   shiny::validate(shiny::need(
+                     !is.null(r_neositeid()),
+                     "Please, select a siteid before moving foward"
+                   ))
+
+                 })
+
+                 # Add radiobuttons if the user selects
+                 # 'Update Current Location' as option
                  output$dynamicUI <- shiny::renderUI({
-                   if (input$modify == "No") {
-                     shinyWidgets::prettyRadioButtons( # or prettyRadioButtons
+
+
+                   if (input$modify == "Update Current Location") {
+                     shinyWidgets::prettyRadioButtons(
                        inputId = ns("nooptions"),
                        label = "How would you update NeotomaDB?",
                        choices = c("Replace with HYDROLakeDB" ,
                                    "Create lake polygon"),
-                       outline = TRUE,
-                       plain = TRUE,
+                      # outline = TRUE,
+                     #  plain = TRUE,
                        status = "primary",
                        icon = shiny::icon("check"))
                    } else {

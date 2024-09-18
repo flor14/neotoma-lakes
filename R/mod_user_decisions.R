@@ -28,11 +28,19 @@ userdecisionsServer <- function(id,
 
                  # Text
                  output$action <- shiny::renderText({
-                   if (modify() == 'Yes') {
+
+                   if (modify() == "No Action"){
+                     # Message
+                     shiny::validate(shiny::need(
+                       modify() == "No Action"))
+                       "Please, select an action"
+
+                   }else if (modify() == 'Accept Current Location') {
                      paste("The NeotomaDB site",
                            neositeid(),
                            "is correct and don't need to be replaced")
-                   } else if (nooptions() == "Replace with HYDROLakeDB") {
+                   } else if (modify() == "Update Current Location" &&
+                              nooptions() == "Replace with HYDROLakeDB") {
                      # Message
                      shiny::validate(shiny::need(
                        !is.null(map_shape_click()),
@@ -52,26 +60,23 @@ userdecisionsServer <- function(id,
                        !is.null(map_draw_new_feature()),
                        "Please, create a polygon in the map"
                      ))
-
-
                      paste(
                        "The NeotomaDB site",
                        neositeid(),
                        "can be replaced with the polygon that I am submitting"
                      )
                    }
-
                  })
 
                  # SUBMIT
                  data_submit <- shiny::reactive({
-                 if (modify() == 'Yes') {
+                 if (modify() == 'Accept Current Location') {
                    df <- data.frame('siteId' = neositeid(),
                                     'comments' = input$notes)
 
                    df
 
-                 } else if (modify() == "No" &&
+                 } else if (modify() == "Update Current Location" &&
                             nooptions() == "Replace with HYDROLakeDB") {
                    df <-   data.frame(
                      'siteId' = neositeid(),
@@ -81,7 +86,7 @@ userdecisionsServer <- function(id,
 
                    df
 
-                 } else if (modify() == "No" &&
+                 } else if (modify() == "Update Current Location" &&
                             nooptions() == "Create lake polygon") {
                    if (!is.null(map_draw_new_feature())) {
 
@@ -107,16 +112,18 @@ userdecisionsServer <- function(id,
     },
     content = function(fname) {
 
-      if (modify() == 'Yes') {
+      if (
+          modify() == 'Accept Current Location') {
         write.csv(data_submit(), fname)
 
-      } else if (modify() == 'No' &&
+      } else if (modify() == 'Update Current Location' &&
                  nooptions() == 'Create lake polygon') {
 
         sf::st_write(data_submit(), fname,
                      layer_options = "GEOMETRY=AS_WKT")
 
-      } else{
+      } else if(modify() == 'Update Current Location' &&
+                nooptions() == 'Replace with HYDROLakeDB' ){
 
         write.csv(data_submit(), fname)
 
