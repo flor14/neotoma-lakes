@@ -1,5 +1,5 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from README.Rmd. Please edit that file --> 
 
 # Neotoma Lakes App <img src="www/neotomalakes_logo.png" align="right" height="200" />
 
